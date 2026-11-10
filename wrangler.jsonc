@@ -1,0 +1,13 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "usami-portfolio",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application",
+  },
+  // TODO(usami): ドメインが決まったら routes を有効にする（SPEC 9章）
+  // "routes": [
+  //   { "pattern": "{{DOMAIN}}", "custom_domain": true }
+  // ]
+}

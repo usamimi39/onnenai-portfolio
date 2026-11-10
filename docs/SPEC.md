@@ -35,7 +35,7 @@
 - 将来ブログなどページ単位の発信が必要になったら、同じルーティングのまま TanStack Start に移せる構成にしてある
 - Next.jsは慣れているが、サーバー機能を使わないサイトには過剰と判断。React Routerは適切だが、自分が説明しきれない技術で作ることを避けた
 - 作品は外部リンクへ飛ばすため詳細ページを持たず、コンテンツはTypeScriptの型付き配列で管理する。ブログのように本文を書きたい内容は、このサイトではなく別のブログで扱う
-- 部品とテーマは Astryx、レイアウトの記述は Tailwind と役割を分けた。Tailwind は公式ブリッジで Astryx のトークンを読むだけにし、テーマの値を二重に持たない
+- テーマ・部品・レイアウトは Astryx、微調整は Tailwind と役割を分けた。Tailwind は公式ブリッジで Astryx のトークンを読むだけにし、テーマの値を二重に持たない
 
 ---
 
@@ -66,12 +66,13 @@
 │   │   ├── personal.ts       # 個人の創作・開発
 │   │   └── index.ts          # 並び替え・featured 抽出などの関数
 │   ├── assets/works/         # サムネイル（TSから import する）
-│   ├── theme/
-│   │   └── onnenai-theme.ts  # defineTheme({ extends: neutral, ... })。Figmaの値をここに写す
+│   ├── themes/onnenai/
+│   │   ├── onnenaiTheme.ts       # defineTheme({ extends: neutral, ... })。Figmaの値をここに写す
+│   │   ├── onnenaiTheme.doc.mjs  # `astryx theme add` が読む記述子
+│   │   └── onnenai.{css,js,d.ts} # `pnpm theme:build` の生成物（手で編集しない）
 │   ├── astryx-themes.ts      # `astryx theme add` が生成。onnenai テーマを既定にする
 │   └── styles/
-│       ├── globals.css       # レイヤー順の宣言 + Tailwind + Astryx + ブリッジ（最初に読み込む）
-│       └── app-tokens.css    # Astryx にないアプリ独自トークン（ドット背景など）
+│       └── globals.css       # レイヤー順の宣言 + Tailwind + Astryx + ブリッジ（最初に読み込む）
 ├── scripts/
 │   └── token-guard.sh        # 値の直書き検出
 ├── vite.config.ts
@@ -182,9 +183,9 @@ export type Profile = {
 | 担当 | 持つもの |
 | --- | --- |
 | Figma（onnenai.cc-systems） | 値の正。バリアブル（Primitives / Color(Light,Dark) / Dimension / Typography）、テキストスタイル、コンポーネント |
-| Astryx | テーマ（`defineTheme`）、トークンのCSS変数、ダークモード（`<Theme>`）、Button などの部品 |
-| Tailwind | レイアウトを `className` に書くための層。ブリッジ経由で Astryx のトークンを読むだけで、値は持たない |
-| app-tokens.css | Astryx にないアプリ独自トークンだけ |
+| Astryx | テーマ（`defineTheme`）、トークンのCSS変数、ダークモード（`<Theme>`）、Button などの部品、レイアウト部品（VStack / HStack / Grid など） |
+| Tailwind | 部品の `className` での微調整と、Astryx で表せないもの（比率、object-fit、最大幅、ブレークポイント）だけ。ブリッジ経由で Astryx のトークンを読むだけで、値は持たない |
+| テーマの `localTokens` | Astryx にないアプリ独自トークンだけ |
 
 スタイルを書く手段は `className`（Tailwind）だけ。Astryx 部品の見た目調整も `className` で行い、`xstyle` / StyleX は使わない。
 
@@ -217,7 +218,6 @@ npx @astryxdesign/cli theme add neutral
 @import "@astryxdesign/core/tailwind-theme.css";   /* ブリッジ */
 @import "tailwindcss/utilities.css" layer(utilities);
 
-@import "./app-tokens.css";
 @import "gen-interface-jp/400.css";
 @import "gen-interface-jp/500.css";
 @import "gen-interface-jp/700.css";
@@ -226,7 +226,9 @@ npx @astryxdesign/cli theme add neutral
 - `globals.css` は `src/main.tsx` の**1行目**で import する。生成された `astryx-themes` やテーマCSSより先に読まれないとレイヤー順が崩れる
 - 崩れてもビルドもコンソールも何も言わない。実装後に、Tailwind のユーティリティが Astryx 部品の既定スタイルを上書きできること、Astryx の reset がユーティリティを打ち消していないことを画面で確認する
 
-### 4.4 テーマ（src/theme/onnenai-theme.ts）
+### 4.4 テーマ（src/themes/onnenai/onnenaiTheme.ts）
+
+Astryx の `theme add` は `src/themes/<slug>/` だけを読むため、この場所に置く。値を変えたら `pnpm theme:build` で再ビルドする。
 
 `defineTheme({ extends: <neutral テーマ>, ... })` で、Figma の値を上書きする。書き方は `npx @astryxdesign/cli docs author-a-theme` を見て合わせる。
 
@@ -272,23 +274,23 @@ npx @astryxdesign/cli theme add neutral
 | text/label | label | 14px / 150% / 500 |
 | text/supporting | supporting | 13px / 160% / 400 |
 
-### 4.5 アプリ独自トークン（src/styles/app-tokens.css）
+### 4.5 アプリ独自トークン（onnenai テーマの `localTokens`）
 
-Astryx にないものだけ。名前を Astryx と重ねない。
+Astryx にないものだけ。名前を Astryx と重ねない。`:root` には書かない。
 
-```css
-:root {
-  --color-decor-dot: light-dark(#c4cfd4, #19242e);
-  --decor-dot-size: 3.2px;
-  --decor-dot-gap: 28px;
-  --layout-content-width: 1120px;
-  --layout-gutter: 24px;
-  --space-block: 64px;    /* Figma spacing/16 */
-  --space-section: 96px;  /* Figma spacing/24 */
-}
+```ts
+localTokens: {
+  '--color-decor-dot': ['#c4cfd4', '#19242e'],
+  '--decor-dot-size': '3.2px',
+  '--decor-dot-gap': '28px',
+  '--layout-content-width': '1120px',
+  '--layout-gutter': '24px',
+  '--space-block': '64px',   // Figma spacing/16
+  '--space-section': '96px', // Figma spacing/24
+},
 ```
 
-Tailwind から使うものは `@theme inline` で別名を付けて公開する（Astryx・ブリッジの名前と衝突しないことを確認）。
+Tailwind から使うものは `globals.css` の `@theme reference inline` で別名を付けて公開する（Astryx・ブリッジの名前と衝突しないことを確認）。
 
 ### 4.6 ダークモード
 - Astryx の `<Theme>` が `data-theme="light|dark"` を `<html>` に同期する。ほかのダークモードの仕組みを足さない
@@ -312,11 +314,11 @@ background-size: var(--decor-dot-gap) var(--decor-dot-gap);
 `src/` 配下で以下を検出したら exit 1。`pnpm check` に含める。
 - Tailwind の任意値: `-\[`
 - Tailwind 既定パレット: `-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-[0-9]{2,3}`
-- 16進カラー・`rgb(`・`hsl(`（`src/theme/` と `app-tokens.css` 以外）
+- 16進カラー・`rgb(`・`hsl(`（`src/themes/` 以外）
 - `style={{`、`xstyle`、`stylex`
 
 ### 4.10 使えるクラス名の一覧（docs/TOKENS.md）
-導入後、`node_modules/@astryxdesign/core/tailwind-theme.css` と app-tokens の `@theme inline` を読み、使えるクラス名（色・余白・角丸・影・文字）を一覧にして `docs/TOKENS.md` に書き出す。実装ではこの一覧にあるクラスだけを使う。
+導入後、`node_modules/@astryxdesign/core/tailwind-theme.css` と `globals.css` の `@theme reference inline` を読み、使えるクラス名（色・余白・角丸・影・文字）を一覧にして `docs/TOKENS.md` に書き出す。実装ではこの一覧にあるクラスだけを使う。
 
 ---
 
@@ -327,10 +329,10 @@ Figma の Components ページと名前・プロパティをそろえる。
 | Figma | 実装 | 仕様 |
 | --- | --- | --- |
 | Button（Style=Primary / Secondary） | Astryx `Button` | Primary は #66ccff の塗り＋濃色文字。1画面に1つまで。variant 名は `cli component Button` で確認 |
-| Tag | Astryx `Badge` が仕様に合えば使う。合わなければ自作 | 担当と年の小ラベル。`--color-background-muted` 地、`--color-text-secondary` 文字、角丸 full |
-| WorkCard | 自作（Tailwind）。Astryx に合う Card があれば中身に使ってよい | サムネ16:9、タイトル（h3）、説明（body・secondary）、Tag、外部リンクのボタン（`links[0]`）。影なし・境界線あり・角丸 container。カード内リンクは1つ |
+| Tag | 自作（Astryx の Badge は数の表示専用なので使わない）。中身は Astryx の部品で組む | 担当と年の小ラベル。`--color-background-muted` 地、`--color-text-secondary` 文字、角丸 full |
+| WorkCard | 自作。Astryx のレイアウト部品で組み、Astryx に合う Card があれば中身に使ってよい。Tailwind は微調整だけ | サムネ16:9、タイトル（h3）、説明（body・secondary）、Tag、外部リンクのボタン（`links[0]`）。影なし・境界線あり・角丸 container。カード内リンクは1つ |
 | Background/DotGrid | CSS（4.7） | |
-| Header / Footer / ThemeToggle / NotFound | 自作（Tailwind）。中のボタン類は Astryx | Figma で作ったら追加 |
+| Header / Footer / ThemeToggle / NotFound | 自作（Astryx のレイアウト部品で組む）。中のボタン類は Astryx | Figma で作ったら追加 |
 
 - サムネイルは `aspect-ratio` 固定＋`object-fit: cover`、`loading="lazy" decoding="async"`（トップのイチオシは eager）
 - 外部リンクは `target="_blank" rel="noopener"` と、外部であることの視覚的手がかり＋読み上げテキスト
@@ -402,7 +404,7 @@ Figma の Components ページと名前・プロパティをそろえる。
 ## 10. 今夜のMVP（11/10中に提出）
 
 1. 雛形作成 → 空のトップを `{{DOMAIN}}` にデプロイ（ドメイン接続の問題を最初に潰す）
-2. Astryx 導入（4.2〜4.3）→ onnenai テーマ（4.4）→ app-tokens・ドット背景 → TOKENS.md → 基本コンポーネント（Header / Footer / WorkCard / Tag、Button は Astryx）
+2. Astryx 導入（4.2〜4.3）→ onnenai テーマ（4.4）→ 独自トークン（localTokens）・ドット背景 → TOKENS.md → 基本コンポーネント（Header / Footer / WorkCard / Tag、Button は Astryx）
 3. `src/content/` の型と枠（文章と画像はユーザーが入れる）
 4. `/`（ヒーロー＋イチオシ）、`/works`、`/personal`、NotFound
 5. ThemeToggle、共通OGP
