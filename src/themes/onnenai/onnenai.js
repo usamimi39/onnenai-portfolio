@@ -219,7 +219,7 @@ export const onnenaiTheme = {
   },
   localTokens: {
     "--astryx-theme-neutral-color-status-fill-accent": "light-dark(#0074e2, #6d9cfe)",
-    "--color-decor-dot": "light-dark(#c4cfd4, #19242e)",
+    "--color-decor-dot": "light-dark(#8fdaff, #06446b)",
     "--decor-dot-size": "3.2px",
     "--decor-dot-gap": "28px",
     "--layout-content-width": "1120px",
@@ -358,6 +358,10 @@ export const onnenaiTheme = {
       "variant:destructive": {
         "backgroundColor": "var(--color-error-muted)",
         "color": "var(--color-on-error-muted)"
+      },
+      "variant:secondary": {
+        "backgroundColor": "transparent",
+        "border": "1px solid var(--color-border-emphasized)"
       }
     },
     "badge": {
@@ -444,6 +448,11 @@ export const onnenaiTheme = {
       "base": {
         "padding": "var(--spacing-3)"
       }
+    },
+    "link": {
+      "base": {
+        "--color-overlay-pressed": "transparent"
+      }
     }
   },
   __onDark: {
@@ -523,6 +532,19 @@ export const onnenaiTheme = {
             "--text-supporting-size": "0.8125rem",
             "--text-supporting-leading": "1.6",
             "--text-supporting-weight": "var(--font-weight-normal)"
+          }
+        }
+      },
+      {
+        "when": {
+          "width": {
+            "below": "md"
+          }
+        },
+        "value": {
+          "tokens": {
+            "--text-display-1-size": "2.5rem",
+            "--text-display-1-leading": "1.2"
           }
         }
       }

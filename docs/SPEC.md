@@ -17,7 +17,7 @@
 | ドメイン | `{{DOMAIN}}`（Cloudflare管理、Workersのカスタムドメインで接続） |
 | UIライブラリ | Meta Astryx（`@astryxdesign/core`、ベータのためバージョン固定）。テーマ・トークン・ダークモード・基本部品を担当 |
 | スタイル | Tailwind CSS v4 を Astryx の Tailwind ブリッジ経由で使用。値は持たず、Astryx のトークンを読むクラス名だけ使う。StyleX（`xstyle`）は使わない |
-| ダークモード | Astryx の `<Theme>` が管理（`data-theme` と `light-dark()`）。初期値はOS設定、手動トグルあり |
+| ダークモード | Astryx の `<Theme>` が管理（`data-theme` と `light-dark()`）。初期値はOS設定。手動トグルで、いま表示しているモードの反対（ライト ⇄ ダーク）に切り替える |
 | フォント | npm `gen-interface-jp` をセルフホストし、Astryx テーマのフォントを差し替え |
 | ベースカラー | #66ccff（`--color-accent`） |
 | Figma | onnenai.cc-systems（Foundations / Components ページ）が正 |
@@ -49,7 +49,7 @@
 ├── index.html                # 共通OGP、<noscript>
 ├── public/
 │   ├── og/default.png        # 1200x630
-│   ├── favicon.svg
+│   ├── favicon.ico
 │   └── _headers
 ├── src/
 │   ├── main.tsx              # 1行目で globals.css を import → <Theme> → RouterProvider
@@ -58,12 +58,16 @@
 │   │   ├── index.tsx
 │   │   ├── works.tsx
 │   │   └── personal.tsx
-│   ├── components/           # Header, Footer, WorkCard, CardGrid, Tag, ThemeToggle, NotFound
+│   ├── components/           # Header, NavLink, Footer, WorkCard, CardGrid, Tag, ThemeToggle, NotFound
+│   │                         # ＋ Container（本文幅）, Section（トップの各セクション）, PageHeader（見出し＋一言説明）
+│   │                         # ＋ トップ専用: Hero, ProfileLists, SkillList, AboutSite
+│   │                         # ＋ ThemeMode（<Theme mode> の切り替え）, RouterLink（Astryx の LinkProvider 用）, SunIcon / MenuIcon
 │   ├── content/
 │   │   ├── types.ts          # Work / Profile の型
 │   │   ├── profile.ts        # トップのヒーロー兼About
 │   │   ├── works.ts          # チーム・公的な制作
 │   │   ├── personal.ts       # 個人の創作・開発
+│   │   ├── site.ts           # サイト名・ページ見出し・トップのセクション見出し・404 の文言
 │   │   └── index.ts          # 並び替え・featured 抽出などの関数
 │   ├── assets/works/         # サムネイル（TSから import する）
 │   ├── themes/onnenai/
@@ -163,9 +167,12 @@ export type Profile = {
   affiliation: string;
   intro: string;
   positions: string[];
+  icon: string;          // 自作イラスト（丸く切り抜く）。src/assets から import
+  iconAlt: string;       // Figma の指定: 「本人を描いたイラスト（自作）」
   awards: string[];
   skills: { group: string; items: string[] }[];
-  links: { label: string; href: string }[];
+  links: { label: string; href: string }[];     // ヒーローのボタンとフッターに使う
+  aboutSite: { title: string; body: string }[]; // 「このサイトについて」（デザイン / 作り方 / 技術）
 };
 ```
 
@@ -280,7 +287,7 @@ Astryx にないものだけ。名前を Astryx と重ねない。`:root` には
 
 ```ts
 localTokens: {
-  '--color-decor-dot': ['#c4cfd4', '#19242e'],
+  '--color-decor-dot': ['#8fdaff', '#06446b'],
   '--decor-dot-size': '3.2px',
   '--decor-dot-gap': '28px',
   '--layout-content-width': '1120px',
@@ -294,7 +301,7 @@ Tailwind から使うものは `globals.css` の `@theme reference inline` で�
 
 ### 4.6 ダークモード
 - Astryx の `<Theme>` が `data-theme="light|dark"` を `<html>` に同期する。ほかのダークモードの仕組みを足さない
-- 初期値はOS設定。ThemeToggle は Astryx の API（`useTheme` など）でモードを切り替える。選択を保存する必要があれば、Astryx に保存機能がない場合だけ `localStorage` を使う（読み書きは `useEffect` 内）
+- 初期値はOS設定。ThemeToggle は Astryx の `useTheme().mode`（OS設定を反映したあとの light / dark）を読み、押すたびに `<Theme mode>` をその反対に切り替える。「OSに合わせる」へは戻らない（順番に入れると、OS と同じモードへ進む1回が見た目では何も起きないため）。aria-label で現在の状態を伝える（Figma: ThemeToggle）。選択を保存する必要があれば、Astryx に保存機能がない場合だけ `localStorage` を使う（読み書きは `useEffect` 内）
 
 ### 4.7 ドット背景
 `body` の背景に CSS で描く。画像にしない。
@@ -332,20 +339,25 @@ Figma の Components ページと名前・プロパティをそろえる。
 | Tag | 自作（Astryx の Badge は数の表示専用なので使わない）。中身は Astryx の部品で組む | 担当と年の小ラベル。`--color-background-muted` 地、`--color-text-secondary` 文字、角丸 full |
 | WorkCard | 自作。Astryx のレイアウト部品で組み、Astryx に合う Card があれば中身に使ってよい。Tailwind は微調整だけ | サムネ16:9、タイトル（h3）、説明（body・secondary）、Tag、外部リンクのボタン（`links[0]`）。影なし・境界線あり・角丸 container。カード内リンクは1つ |
 | Background/DotGrid | CSS（4.7） | |
-| Header / Footer / ThemeToggle / NotFound | 自作（Astryx のレイアウト部品で組む）。中のボタン類は Astryx | Figma で作ったら追加 |
+| Header（Style=Classic）/ Header/Mobile | 自作（Astryx のレイアウト部品で組む）。ボタンは Astryx の IconButton、モバイルのナビは Astryx の `MobileNav` | 画面上部に固定。ロゴの文字はライト・ダークとも #66ccff（`text-accent-bg`。ルール4の例外、ユーザー指示）。上下の余白は Figma より詰め、文字は Figma より一回り大きくする（ユーザー指示）。下線付きの帯（`--color-background-body` 地）。md 未満はメニューボタンからナビを開く |
+| NavLink | 自作（Astryx の Link） | 現在地（`aria-current="page"`）は文字色を `--color-text-accent` にする（地の色は付けない）。押したときのグレーの地（Astryx の pressed オーバーレイ）もテーマの `components.link` で消す（全 Link 共通） |
+| ThemeToggle | Astryx の IconButton | 4.6。PC は枠なし、モバイルは境界線あり |
+| Footer | 自作 | 上に境界線。コピーライトと外部リンク（`profile.links`） |
+| ProfileIcon | Astryx の AspectRatio（ellipse） | PC 224px・スマホ 96px、境界線のみ・影なし |
+| NotFound | 自作 | Figma で作ったら合わせる |
 
 - サムネイルは `aspect-ratio` 固定＋`object-fit: cover`、`loading="lazy" decoding="async"`（トップのイチオシは eager）
-- 外部リンクは `target="_blank" rel="noopener"` と、外部であることの視覚的手がかり＋読み上げテキスト
+- 外部リンクは `target="_blank" rel="noopener"` と読み上げテキスト（「新しいタブで開く」）。見た目の手がかり（アイコンなど）は Figma にあるものだけ付ける（Screens 時点ではなし）
 
 ---
 
 ## 6. ページ仕様
 
 ### `/`（ヒーロー兼About）
-キャッチコピー → 名前（本名とalt名義を併記）・所属 → 短い自己紹介 → イチオシ作品（`featured` を order 順に2〜3件、Miraithmic と universe を先頭）→ 役職・受賞 → スキル → 外部リンク → 技術構成の短い説明。文章はすべて `src/content/profile.ts` から。
+Figma「Screens」の Top / Desktop・Top / Mobile に従う。ヒーロー（キャッチコピー → 名前（本名とalt名義を併記）→ 所属 → 短い自己紹介 → 外部リンクのボタン。PC はアイコンが右、スマホはキャッチコピーの下）→ イチオシ（`featured` を order 順に2〜3件、Miraithmic と universe を先頭）→ 役職・受賞（PC は2列）→ スキル → このサイトについて（デザイン / 作り方 / 技術、PC は3列）。文章は `src/content/profile.ts`、セクション見出しは `src/content/site.ts` から。
 
 ### `/works` `/personal`
-ページ見出し＋一言説明＋CardGrid。
+ページ見出し＋一言説明＋CardGrid（Figma: Works / Desktop・Works / Mobile）。見出しと説明は `src/content/site.ts` から。
 
 ### 迷い方の上限
 どのページもヘッダーから一覧へ1クリック、作品の外部リンクへ2クリック。
