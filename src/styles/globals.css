@@ -1,0 +1,35 @@
+/* レイヤー順は SPEC 4.3。src/main.tsx の1行目で import すること */
+@layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
+
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/preflight.css' layer(base);
+@import '@astryxdesign/core/reset.css';
+@import '@astryxdesign/core/astryx.css';
+/* onnenai テーマのCSS（src/themes/onnenai/onnenai.css）は、CLI が生成した src/astryx-themes.ts が import する */
+@import '@astryxdesign/core/tailwind-theme.css';
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+@import 'gen-interface-jp/400.css';
+@import 'gen-interface-jp/500.css';
+@import 'gen-interface-jp/700.css';
+
+/* テーマの localTokens を Tailwind に公開する別名（値は持たず、変数を読むだけ） */
+@theme reference inline {
+  --color-decor-dot: var(--color-decor-dot);
+  --container-content: var(--layout-content-width);
+  --spacing-gutter: var(--layout-gutter);
+  --spacing-block: var(--space-block);
+  --spacing-section: var(--space-section);
+}
+
+/* ドット背景（SPEC 4.7） */
+@layer base {
+  body {
+    background-color: var(--color-background-body);
+    background-image: radial-gradient(
+      var(--color-decor-dot) calc(var(--decor-dot-size) / 2),
+      transparent 0
+    );
+    background-size: var(--decor-dot-gap) var(--decor-dot-gap);
+  }
+}

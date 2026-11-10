@@ -15,6 +15,14 @@ export default [
     },
   },
   {
-    ignores: ['eslint.config.js', 'prettier.config.js'],
+    ignores: [
+      'eslint.config.js',
+      'prettier.config.js',
+      // astryx theme build / theme add の生成物
+      'src/astryx-themes.ts',
+      'src/themes/*/*.js',
+      'src/themes/*/*.d.ts',
+      'src/themes/*/*.doc.mjs',
+    ],
   },
 ]
