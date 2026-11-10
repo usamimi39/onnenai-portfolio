@@ -14,7 +14,7 @@
 | 将来 | TanStack Start へ移行してプリレンダリング化（提出後、任意） |
 | 実行環境 | Node 22 LTS 以上 / pnpm |
 | 配信 | Cloudflare Workers Static Assets（Workerスクリプトなし、SPAフォールバック） |
-| ドメイン | `{{DOMAIN}}`（Cloudflare管理、Workersのカスタムドメインで接続） |
+| ドメイン | `onnenai.cc`（wwwなし。Cloudflare管理、Workersのカスタムドメインで接続） |
 | UIライブラリ | Meta Astryx（`@astryxdesign/core`、ベータのためバージョン固定）。テーマ・トークン・ダークモード・基本部品を担当 |
 | スタイル | Tailwind CSS v4 を Astryx の Tailwind ブリッジ経由で使用。値は持たず、Astryx のトークンを読むクラス名だけ使う。StyleX（`xstyle`）は使わない |
 | ダークモード | Astryx の `<Theme>` が管理（`data-theme` と `light-dark()`）。初期値はOS設定。手動トグルで、いま表示しているモードの反対（ライト ⇄ ダーク）に切り替える |
@@ -367,7 +367,7 @@ Figma「Screens」の Top / Desktop・Top / Mobile に従う。ヒーロー（�
 ## 7. index.html（共通メタ）
 
 - `<html lang="ja">`、`<title>`、`description`
-- 共通OGP: `og:title` `og:description` `og:type=website` `og:url=https://{{DOMAIN}}/` `og:image=https://{{DOMAIN}}/og/default.png` `twitter:card=summary_large_image`
+- 共通OGP: `og:title` `og:description` `og:type=website` `og:url=https://onnenai.cc/` `og:image=https://onnenai.cc/og/default.png` `twitter:card=summary_large_image`
 - `<noscript>`: 名前と、SoundCloud・pixiv・GitHubなど主要リンクだけを書いた最小限の内容
 
 ---
@@ -395,7 +395,7 @@ Figma「Screens」の Top / Desktop・Top / Mobile に従う。ヒーロー（�
     "not_found_handling": "single-page-application"
   },
   "routes": [
-    { "pattern": "{{DOMAIN}}", "custom_domain": true }
+    { "pattern": "onnenai.cc", "custom_domain": true }
   ]
 }
 ```
@@ -415,7 +415,7 @@ Figma「Screens」の Top / Desktop・Top / Mobile に従う。ヒーロー（�
 
 ## 10. 今夜のMVP（11/10中に提出）
 
-1. 雛形作成 → 空のトップを `{{DOMAIN}}` にデプロイ（ドメイン接続の問題を最初に潰す）
+1. 雛形作成 → 空のトップを `onnenai.cc` にデプロイ（ドメイン接続の問題を最初に潰す）
 2. Astryx 導入（4.2〜4.3）→ onnenai テーマ（4.4）→ 独自トークン（localTokens）・ドット背景 → TOKENS.md → 基本コンポーネント（Header / Footer / WorkCard / Tag、Button は Astryx）
 3. `src/content/` の型と枠（文章と画像はユーザーが入れる）
 4. `/`（ヒーロー＋イチオシ）、`/works`、`/personal`、NotFound
@@ -438,7 +438,6 @@ MVPのコンテンツ:
 - 書けていない制作の話は別のブログで（必要なら 3.4）
 
 ## 12. ユーザー判断待ち
-- `{{DOMAIN}}`
 - profile.md の全文言（ESと同じ言葉で）
 - 各作品の summary / roles / 画像 / alt / リンク（`src/content/*.ts`）
 - ナビの表示名（URLは `/works` `/personal` で確定）
