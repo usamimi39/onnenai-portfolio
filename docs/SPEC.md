@@ -25,7 +25,7 @@
 | URL | `/` `/works` `/personal` ＋ notFound（詳細ページは作らない） |
 | カード並び順 | 重要度順（frontmatter `order` 昇順）。年はタグで表示 |
 | カードのタグ | 担当（roles）と年（year） |
-| カードの行き先 | 外部リンク（`links[0]`）。リンクがなければボタンなし |
+| カードの行き先 | 外部リンク（`links` の全件を並べた順にボタンにする）。リンクがなければボタンなし |
 | OGP / SEO | サイト共通のOGPを `index.html` に固定で書くだけ。ページごとのOGPとSEOは対象外 |
 
 ### 判断の記録（About用の材料。文章はユーザーが書く）
@@ -122,11 +122,11 @@ export type Work = {
   summary: string;       // カードの説明。1〜2行（60字程度まで）
   thumbnail: string;     // src/assets から import した画像
   thumbnailAlt: string;  // 必須。画像の内容を説明する
-  year: number;
+  year: number | number[]; // 複数年にまたがる作品は配列。年ごとにタグになる
   roles: string[];       // 自分の担当だけ（例: ["主催", "ディレクション"]）
   order: number;         // 小さいほど上。重要度順
-  featured?: boolean;    // トップのイチオシ（2〜3件）
-  links: WorkLink[];     // 先頭がカードのボタンになる。空ならボタンなし
+  featured?: boolean;    // トップのピックアップ（2〜3件）
+  links: WorkLink[];     // 並べた順にカードのボタンになる。空ならボタンなし
 };
 ```
 
@@ -337,16 +337,16 @@ Figma の Components ページと名前・プロパティをそろえる。
 | --- | --- | --- |
 | Button（Style=Primary / Secondary） | Astryx `Button` | Primary は #66ccff の塗り＋濃色文字。1画面に1つまで。variant 名は `cli component Button` で確認 |
 | Tag | 自作（Astryx の Badge は数の表示専用なので使わない）。中身は Astryx の部品で組む | 担当と年の小ラベル。`--color-background-muted` 地、`--color-text-secondary` 文字、角丸 full |
-| WorkCard | 自作。Astryx のレイアウト部品で組み、Astryx に合う Card があれば中身に使ってよい。Tailwind は微調整だけ | サムネ16:9、タイトル（h3）、説明（body・secondary）、Tag、外部リンクのボタン（`links[0]`）。影なし・境界線あり・角丸 container。カード内リンクは1つ |
+| WorkCard | 自作。Astryx のレイアウト部品で組み、Astryx に合う Card があれば中身に使ってよい。Tailwind は微調整だけ | サムネ16:9、タイトル（h3）、説明（body・secondary）、Tag、外部リンクのボタン（`links` の全件。横に並べ、入りきらなければ折り返す）。影なし・境界線あり・角丸 container |
 | Background/DotGrid | CSS（4.7） | |
-| Header（Style=Classic）/ Header/Mobile | 自作（Astryx のレイアウト部品で組む）。ボタンは Astryx の IconButton、モバイルのナビは Astryx の `MobileNav` | 画面上部に固定。ロゴの文字はライト・ダークとも #66ccff（`text-accent-bg`。ルール4の例外、ユーザー指示）。上下の余白は Figma より詰め、文字は Figma より一回り大きくする（ユーザー指示）。下線付きの帯（`--color-background-body` 地）。md 未満はメニューボタンからナビを開く |
+| Header（Style=Classic）/ Header/Mobile | 自作（Astryx のレイアウト部品で組む）。ボタンは Astryx の IconButton、モバイルのナビは Astryx の `MobileNav` | 画面上部に固定。ロゴは favicon と同じうさぎのアイコン（`src/assets/profile/usagi_icon.png`。モバイル 32px / md 以上 36px、alt は空）＋サイト名（primary の文字色）。上下の余白は Figma より詰め、文字は Figma より一回り大きくする（ユーザー指示）。下線付きの帯（`--color-background-body` 地）。md 未満はメニューボタンからナビを開く |
 | NavLink | 自作（Astryx の Link） | 現在地（`aria-current="page"`）は文字色を `--color-text-accent` にする（地の色は付けない）。押したときのグレーの地（Astryx の pressed オーバーレイ）もテーマの `components.link` で消す（全 Link 共通） |
 | ThemeToggle | Astryx の IconButton | 4.6。PC は枠なし、モバイルは境界線あり |
 | Footer | 自作 | 上に境界線。コピーライトと外部リンク（`profile.links`） |
 | ProfileIcon | Astryx の AspectRatio（ellipse） | PC 224px・スマホ 96px、境界線のみ・影なし |
 | NotFound | 自作 | Figma で作ったら合わせる |
 
-- サムネイルは `aspect-ratio` 固定＋`object-fit: cover`、`loading="lazy" decoding="async"`（トップのイチオシは eager）
+- サムネイルは `aspect-ratio` 固定＋`object-fit: cover`、`loading="lazy" decoding="async"`（トップのピックアップは eager）
 - 外部リンクは `target="_blank" rel="noopener"` と読み上げテキスト（「新しいタブで開く」）。見た目の手がかり（アイコンなど）は Figma にあるものだけ付ける（Screens 時点ではなし）
 
 ---
@@ -354,7 +354,7 @@ Figma の Components ページと名前・プロパティをそろえる。
 ## 6. ページ仕様
 
 ### `/`（ヒーロー兼About）
-Figma「Screens」の Top / Desktop・Top / Mobile に従う。ヒーロー（キャッチコピー → 名前（本名とalt名義を併記）→ 所属 → 短い自己紹介 → 外部リンクのボタン。PC はアイコンが右、スマホはキャッチコピーの下）→ イチオシ（`featured` を order 順に2〜3件、Miraithmic と universe を先頭）→ 役職・受賞（PC は2列）→ スキル → このサイトについて（デザイン / 作り方 / 技術、PC は3列）。文章は `src/content/profile.ts`、セクション見出しは `src/content/site.ts` から。
+Figma「Screens」の Top / Desktop・Top / Mobile に従う。ヒーロー（キャッチコピー → 名前（本名とalt名義を併記）→ 所属 → 短い自己紹介 → 外部リンクのボタン。PC はアイコンが右、スマホはキャッチコピーの下）→ ピックアップ（`featured` を order 順に2〜3件。今は Miraithmic 03 と universe）→ 役職・受賞（PC は2列）→ スキル → このサイトについて（デザイン / 作り方 / 技術、PC は3列）。文章は `src/content/profile.ts`、セクション見出しは `src/content/site.ts` から。
 
 ### `/works` `/personal`
 ページ見出し＋一言説明＋CardGrid（Figma: Works / Desktop・Works / Mobile）。見出しと説明は `src/content/site.ts` から。
@@ -418,7 +418,7 @@ Figma「Screens」の Top / Desktop・Top / Mobile に従う。ヒーロー（�
 1. 雛形作成 → 空のトップを `onnenai.cc` にデプロイ（ドメイン接続の問題を最初に潰す）
 2. Astryx 導入（4.2〜4.3）→ onnenai テーマ（4.4）→ 独自トークン（localTokens）・ドット背景 → TOKENS.md → 基本コンポーネント（Header / Footer / WorkCard / Tag、Button は Astryx）
 3. `src/content/` の型と枠（文章と画像はユーザーが入れる）
-4. `/`（ヒーロー＋イチオシ）、`/works`、`/personal`、NotFound
+4. `/`（ヒーロー＋ピックアップ）、`/works`、`/personal`、NotFound
 5. ThemeToggle、共通OGP
 6. 最終確認 → デプロイ → ESにURLを入れて提出
 

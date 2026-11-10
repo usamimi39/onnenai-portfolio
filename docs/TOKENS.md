@@ -36,7 +36,7 @@ SPEC 4.10。出典は `node_modules/@astryxdesign/core/src/tailwind-theme.css`�
 
 | 名前              | 読む変数                    | 主な使い方                                                 |
 | ----------------- | --------------------------- | ---------------------------------------------------------- |
-| `accent-bg`       | `--color-accent`（#66ccff） | `bg-accent-bg`。塗りだけに使う。文字色・細い線には使わない（例外: ヘッダーのロゴ文字の `text-accent-bg`） |
+| `accent-bg`       | `--color-accent`（#66ccff） | `bg-accent-bg`。塗りだけに使う。文字色・細い線には使わない |
 | `accent-muted`    | `--color-accent-muted`      | `bg-accent-muted`                                          |
 | `on-accent`       | `--color-on-accent`         | `text-on-accent`（`bg-accent-bg` の上の文字）              |
 | `neutral`         | `--color-neutral`           | `bg-neutral`                                               |

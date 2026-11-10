@@ -5,19 +5,18 @@ import { Heading } from '@astryxdesign/core/Heading'
 import { HStack } from '@astryxdesign/core/HStack'
 import { Text } from '@astryxdesign/core/Text'
 import { VStack } from '@astryxdesign/core/VStack'
-import type { Work } from '../content/types'
+import {  workYears } from '../content/types'
+import type {Work} from '../content/types';
 import { Tag } from './Tag'
 
 type WorkCardProps = {
   work: Work
-  // トップのイチオシなど、最初の画面に入るカードは true（画像を先に読み込む）
+  // トップのピックアップなど、最初の画面に入るカードは true（画像を先に読み込む）
   isPriority?: boolean
 }
 
 // Figma: WorkCard。モバイルは Layout=Vertical、md 以上は Layout=Horizontal
 export function WorkCard({ work, isPriority = false }: WorkCardProps) {
-  const link = work.links.at(0)
-
   return (
     <Card padding={0} className="overflow-hidden">
       <VStack as="article" className="md:flex-row">
@@ -49,22 +48,28 @@ export function WorkCard({ work, isPriority = false }: WorkCardProps) {
                 <Tag label={role} />
               </li>
             ))}
-            <li>
-              <Tag label={String(work.year)} />
-            </li>
+            {workYears(work).map((year) => (
+              <li key={year}>
+                <Tag label={String(year)} />
+              </li>
+            ))}
           </HStack>
-          {link && (
-            <HStack className="pt-2">
-              <Button
-                variant="secondary"
-                size="lg"
-                href={link.href}
-                target="_blank"
-                rel="noopener"
-                label={`${link.label}（新しいタブで開く）`}
-              >
-                {link.label}
-              </Button>
+          {work.links.length > 0 && (
+            <HStack as="ul" gap={2} wrap="wrap" className="pt-2">
+              {work.links.map((link) => (
+                <li key={link.href}>
+                  <Button
+                    variant="secondary"
+                    size="lg"
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener"
+                    label={`${link.label}（新しいタブで開く）`}
+                  >
+                    {link.label}
+                  </Button>
+                </li>
+              ))}
             </HStack>
           )}
         </VStack>

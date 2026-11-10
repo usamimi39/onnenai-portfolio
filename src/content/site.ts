@@ -1,7 +1,7 @@
 import type { Site } from './types'
 
 export const site: Site = {
-  name: 'Portfolio',
+  name: 'onnenai.cc',
   pages: {
     works: {
       title: 'チームの活動',
@@ -13,7 +13,7 @@ export const site: Site = {
     },
   },
   sections: {
-    featured: 'イチオシ',
+    featured: 'ピックアップ',
     positions: '役職',
     awards: '受賞',
     skills: 'スキル',
@@ -23,5 +23,14 @@ export const site: Site = {
     title: '404 Not Found',
     body: 'お探しのページが見つかりません',
     backLabel: 'トップへ',
+  },
+  credit: {
+    before: 'プロフィールアイコンのイラストは、',
+    link: {
+      label: 'ピアプロ・キャラクター・ライセンス',
+      href: 'https://piapro.jp/license/pcl/summary',
+    },
+    after:
+      'に基づいてクリプトン・フューチャー・メディア株式会社のキャラクター「初音ミク」を描いたものです。',
   },
 }

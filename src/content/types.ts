@@ -10,11 +10,16 @@ export type Work = {
   summary: string // カードの説明。1〜2行（60字程度まで）
   thumbnail: string // src/assets から import した画像
   thumbnailAlt: string // 必須。画像の内容を説明する
-  year: number
+  year: number | number[] // 複数年にまたがる作品は配列で（例: [2025, 2026]）。年ごとにタグになる
   roles: string[] // 自分の担当だけ（例: ["主催", "ディレクション"]）
   order: number // 小さいほど上。重要度順
-  featured?: boolean // トップのイチオシ（2〜3件）
-  links: WorkLink[] // 先頭がカードのボタンになる。空ならボタンなし
+  featured?: boolean // トップのピックアップ（2〜3件）
+  links: WorkLink[] // 並べた順にカードのボタンになる。空ならボタンなし
+}
+
+// 年を配列にそろえる（表示と並び替え用）
+export function workYears(work: Work): number[] {
+  return Array.isArray(work.year) ? work.year : [work.year]
 }
 
 export type Profile = {
@@ -57,5 +62,11 @@ export type Site = {
     title: string
     body: string
     backLabel: string
+  }
+  // フッターのクレジット表記。before + リンク + after で1文になる
+  credit: {
+    before: string
+    link: { label: string; href: string }
+    after: string
   }
 }
