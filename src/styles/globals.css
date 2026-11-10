@@ -22,14 +22,33 @@
   --spacing-section: var(--space-section);
 }
 
-/* ドット背景（SPEC 4.7） */
+/* ドット背景（SPEC 4.7）
+   ドットは画面に固定し、スクロールするのは中身とフッターだけにする。
+   iOS Safari は background-attachment: fixed が効かないため、position: fixed の疑似要素に描く */
 @layer base {
   body {
+    background-color: var(--color-background-body);
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
     background-color: var(--color-background-body);
     background-image: radial-gradient(
       var(--color-decor-dot) calc(var(--decor-dot-size) / 2),
       transparent 0
     );
     background-size: var(--decor-dot-gap) var(--decor-dot-gap);
+  }
+}
+
+/* OSで「視差効果を減らす」がオンなら、ページ遷移の View Transition を止める（SPEC 2） */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none;
   }
 }

@@ -57,12 +57,22 @@ export const onnenaiTheme = defineTheme({
         when: { pointer: 'coarse', width: { below: 'lg' } },
         value: { tokens: typeScale },
       },
+      // Figma の Top / Mobile: ヒーローの見出しは display/1 ではなく display/2 の大きさ
+      {
+        when: { width: { below: 'md' } },
+        value: {
+          tokens: {
+            '--text-display-1-size': typeScale['--text-display-2-size'],
+            '--text-display-1-leading': typeScale['--text-display-2-leading'],
+          },
+        },
+      },
     ],
   },
 
   // Astryx にないアプリ独自トークン（SPEC 4.5）。名前を Astryx と重ねない
   localTokens: {
-    '--color-decor-dot': ['#c4cfd4', '#19242e'],
+    '--color-decor-dot': ['#8fdaff', '#06446b'],
     '--decor-dot-size': '3.2px',
     '--decor-dot-gap': '28px',
     '--layout-content-width': '1120px',
@@ -94,5 +104,19 @@ export const onnenaiTheme = defineTheme({
     '--radius-page': '2rem',
 
     ...typeScale,
+  },
+  // 部品の見た目（Figma: Components）
+  components: {
+    link: {
+      // 押したときのグレーの地（Astryx の pressed オーバーレイ）を出さない（ユーザー指示）
+      base: { '--color-overlay-pressed': 'transparent' },
+    },
+    button: {
+      // Figma の Button Style=Secondary は塗りなし＋border-emphasized の線
+      'variant:secondary': {
+        backgroundColor: 'transparent',
+        border: '1px solid var(--color-border-emphasized)',
+      },
+    },
   },
 })

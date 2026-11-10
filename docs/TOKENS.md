@@ -36,7 +36,7 @@ SPEC 4.10。出典は `node_modules/@astryxdesign/core/src/tailwind-theme.css`�
 
 | 名前              | 読む変数                    | 主な使い方                                                 |
 | ----------------- | --------------------------- | ---------------------------------------------------------- |
-| `accent-bg`       | `--color-accent`（#66ccff） | `bg-accent-bg`。塗りだけに使う。文字色・細い線には使わない |
+| `accent-bg`       | `--color-accent`（#66ccff） | `bg-accent-bg`。塗りだけに使う。文字色・細い線には使わない（例外: ヘッダーのロゴ文字の `text-accent-bg`） |
 | `accent-muted`    | `--color-accent-muted`      | `bg-accent-muted`                                          |
 | `on-accent`       | `--color-on-accent`         | `text-on-accent`（`bg-accent-bg` の上の文字）              |
 | `neutral`         | `--color-neutral`           | `bg-neutral`                                               |
@@ -161,6 +161,6 @@ Figma の spacing と同じ数字だけを使う: **1 / 2 / 3 / 4 / 6 / 8 / 12 /
 | ----------------------------------------------------------------------------------- | ------------------------- |
 | `ease-out`                                                                          | `--ease-standard`         |
 | `transition-colors` `transition-opacity` `transition-shadow` `transition-transform` | （プロパティ指定のみ）    |
-| `size-sm` / `size-md` / `size-lg`（`h-` `w-` などにも使える）                       | `--size-element-sm/md/lg` |
+| `size-sm` / `size-md` / `size-lg`（幅と高さを同時に決める。`h-md` などは生成されない） | `--size-element-sm/md/lg` |
 
 > アニメーションは Figma に指示があるものだけ（CLAUDE.md）。

@@ -16,7 +16,7 @@ Usamiの個人ポートフォリオ。React + Vite + TanStack Router のSPA。�
 1. **テーマの値は Astryx だけが持つ。** 色・余白・角丸・文字の値は `src/themes/onnenai/onnenaiTheme.ts`（defineTheme。変更後は `pnpm theme:build`）に置き、Astryx にないものは同じテーマの `localTokens` に入れる。`:root` で上書きしない。Tailwind 側で値を定義しない。
 2. **レイアウトは Astryx のレイアウト部品（VStack / HStack / Grid など）で組む。** Tailwind は部品の `className` での微調整と、Astryx で表せないもの（比率、object-fit、最大幅、ブレークポイント）だけに使う。 スタイルを書く手段は `className` だけで、使ってよいクラスは `docs/TOKENS.md` の一覧にあるものだけ。Tailwind の任意値（`p-[13px]`）、既定パレット（`bg-blue-500`）、インラインstyle、16進カラー、`xstyle` / StyleX は禁止。必要なトークンがなければ作らずに止めて、「Figmaにどのバリアブルを足せばよいか」をユーザーに聞く。
 3. **部品は Astryx を優先する。** Button などは Astryx を使い、props は `pnpm exec astryx component <Name>` で確認してから書く。Badge は数の表示専用なので Tag には使わない。Astryx で組めないものだけ自作し、作る前に理由を伝える。
-4. **#66ccff（`--color-accent`）を文字色や細い線に使わない。** 白地では読めない。上に載せる文字は `--color-on-accent`。リンク文字は `--color-text-accent`。
+4. **#66ccff（`--color-accent`）を文字色や細い線に使わない。** 白地では読めない。上に載せる文字は `--color-on-accent`。リンク文字は `--color-text-accent`。例外はヘッダーのロゴ文字だけ（ユーザー指示で `text-accent-bg`）
 5. **文章を書かない。** キャッチコピー、自己紹介、作品説明、担当範囲、数字、受賞歴は `src/content/*.ts` にユーザーが書く。空なら `TODO(usami): 〇〇を書く` を置く。
 6. **Figmaが正。** UIを作る前に Figma MCP（`get_design_context` / `get_variable_defs` / `get_screenshot`）で該当フレームを読む。Figmaにない装飾やアニメーションを足さない。
 7. **コンテンツは `src/content/*.ts` の型付き配列で持つ。** 型を緩めない（`any`、必須項目の `?` 化は禁止）。画像は import する。詳細ページは作らない。
