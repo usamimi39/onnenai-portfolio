@@ -17,11 +17,10 @@ export const profile: Profile = {
     { group: '実装', items: ['React', 'TypeScript', 'JavaScript', 'HTML', 'CSS', 'Next.js', 'Vite', 'Tailwind CSS'] },
     { group: '制作', items: ['Ableton Live', 'CLIPStudioPaint', 'Blender'] },
   ],
-  // TODO(usami): リンク先を書く
   links: [
     { label: 'GitHub', href: 'https://github.com/usamimi39' },
     { label: 'Blog', href: 'https://blog.onnenai.cc' },
-    { label: 'pixiv', href: 'https://www.pixiv.net/users/45533133' },
+    { label: 'Wantedly', href: 'https://www.wantedly.com/id/H_Usami' },
   ],
   aboutSite: [
     { title: 'デザイン', body: 'TODO(usami): 1〜2行で' },

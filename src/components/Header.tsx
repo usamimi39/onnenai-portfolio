@@ -6,6 +6,7 @@ import { Link } from '@astryxdesign/core/Link'
 import { MobileNav } from '@astryxdesign/core/MobileNav'
 import { Text } from '@astryxdesign/core/Text'
 import { VStack } from '@astryxdesign/core/VStack'
+import logoIcon from '../assets/profile/usagi_icon.png'
 import { site } from '../content/site'
 import type { FileRouteTypes } from '../routeTree.gen'
 import { Container } from './Container'
@@ -20,7 +21,7 @@ const nav: { to: FileRouteTypes['to']; label: string }[] = [
 
 // Figma: Header（Style=Classic）と Header/Mobile。md 未満はナビをメニューボタンから開く
 // 画面上部に固定する（中身とフッターだけがスクロールする）
-// ロゴの文字はライト・ダークとも --color-accent（水色）。CLAUDE.md の絶対ルール4の例外（ユーザー指示）
+// ロゴは favicon と同じうさぎのアイコン＋サイト名。アイコンは隣の文字と同じ内容なので alt は空（読み上げが二重にならないように）
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
@@ -28,23 +29,26 @@ export function Header() {
     <header className="sticky top-0 z-10 border-b border-border bg-body">
       <Container>
         <HStack justify="between" align="center" className="py-2">
-          <Link
-            href="/"
-            color="inherit"
-            className="text-accent-bg no-underline md:hidden"
-          >
-            <Text type="body" weight="medium" color="inherit">
-              {site.name}
-            </Text>
-          </Link>
-          <Link
-            href="/"
-            color="inherit"
-            className="hidden text-accent-bg no-underline md:inline"
-          >
-            <Text size="2xl" weight="bold" color="inherit">
-              {site.name}
-            </Text>
+          <Link href="/" color="primary" className="no-underline">
+            <HStack as="span" align="center" gap={2}>
+              <img src={logoIcon} alt="" className="size-md md:size-lg" />
+              <Text
+                type="body"
+                weight="medium"
+                color="inherit"
+                className="md:hidden"
+              >
+                {site.name}
+              </Text>
+              <Text
+                size="2xl"
+                weight="medium"
+                color="inherit"
+                className="hidden md:inline"
+              >
+                {site.name}
+              </Text>
+            </HStack>
           </Link>
 
           <HStack align="center" gap={4} className="hidden md:flex">
