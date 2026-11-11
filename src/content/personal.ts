@@ -1,5 +1,6 @@
 import thmic03illustthum from '../assets/personal/thmic03illust.png'
 import michizurethum from '../assets/personal/michizure.png'
+import futurasplat from '../assets/personal/futurasplat.webp'
 import type { Work } from './types'
 
 // 個人の創作・開発（SPEC 3.2）
@@ -25,5 +26,16 @@ export const personal: Work[] = [
     roles: ['楽曲制作'], 
     order: 20,
     links: [{ label: 'YouTubeで見る', href: 'https://youtu.be/VXRsrcBSajI?list=RDVXRsrcBSajI' }], 
+  },
+  {
+    id: 'personal-futurasplat',
+    title: 'DJイベント「Futura Splat」出演',
+    summary: 'DJサークル主催イベント「Futura Splat」にてDJとして出演しました。',
+    thumbnail: futurasplat,
+    thumbnailAlt: 'DJサークル主催のイベントFutura Splatのアーカイブ動画サムネイル',
+    year: 2025, 
+    roles: ['DJ'], 
+    order: 30,
+    links: [{ label: 'YouTubeで見る', href: 'https://youtu.be/GZhVPR1oAPA' }], 
   },
 ]

@@ -5,6 +5,7 @@ import soundcreatewebthum from '../assets/works/soundcreateweb.png'
 import thmic02thum from '../assets/works/thmic02.jpg'
 import universethum from '../assets/works/universe.jpg'
 import devhubthum from '../assets/works/devhub.png'
+import funlt2026 from '../assets/works/funlt26.png'
 import type { Work } from './types'
 
 // チーム・公的な制作（SPEC 3.2）
@@ -50,6 +51,17 @@ export const works: Work[] = [
     ],
   },
   {
+    id: 'works-funlt2026',
+    title: '「未来大×企業 大LT 2026」運営',
+    summary: '「未来大×企業 大LT 2026」の運営メンバーとして、イベントの運営、スポンサー誘致、ノベルティ制作に携わりました。',
+    thumbnail: funlt2026,
+    thumbnailAlt: '大LTのノベルティタオルの画像',
+    year: 2026, 
+    roles: ['運営', 'ノベルティ制作'], 
+    order: 40,
+    links: [],
+  },
+  {
     id: 'works-soundcreateweb',
     title: 'SoundCreate公式Webサイトの制作',
     summary: 'DTMサークルSoundCreateの公式Webサイトを制作しました。',
@@ -57,7 +69,7 @@ export const works: Work[] = [
     thumbnailAlt: 'SoundCreate公式Webサイトのトップページ。ヘッドホンを着けた紫髪の女の子のイラストが大きく配置されている',
     year: 2026, 
     roles: ['Web制作','サークル活動'],
-    order: 40,
+    order: 50,
     links: [
       { label: 'サイトを見る', href: 'https://soundcreate.org' },
       { label: 'GitHub', href: 'https://github.com/FUNSoundCreate/SoundCreateWeb_v0' }
@@ -71,7 +83,7 @@ export const works: Work[] = [
     thumbnailAlt: '初音ミクのイラストが描かれた「Miraithmic 02」のCDジャケットを手に持った写真',
     year: 2026, 
     roles: ['主催', '楽曲制作', 'イラスト制作', 'サークル活動'],
-    order: 50,
+    order: 60,
     links: [{ label: 'ブログを見る', href: 'https://www.soundcreate.org/news/2026-07-07' }],
   },
   {
@@ -82,7 +94,7 @@ export const works: Work[] = [
     thumbnailAlt: "U'n'iverseの紹介画像。スマートフォン2台にデジタル名刺とQRコードの画面が表示され、「名刺交換を気軽に、もっと。」のキャッチコピーが添えられている",
     year: 2025,
     roles: ['PM', 'フロントエンド', 'ハッカソン'], 
-    order: 60,
+    order: 70,
     featured: true,
     links: [{ label: 'GitHub', href: 'https://github.com/mofumofupop/universe' }],
   },
@@ -94,7 +106,7 @@ export const works: Work[] = [
     thumbnailAlt: 'FUN Developers Hubのプロフィールページ。ポスター発表の写真をヘッダーに、水色のタイル状のロゴとサービス名が並んでいる',
     year: [2025, 2026],
     roles: ['Web制作', 'フロントエンド', '高度ICT演習'], 
-    order: 70,
+    order: 80,
     links: [],
   },
 ]
